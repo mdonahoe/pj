@@ -35,7 +35,7 @@ def printout(keys, data):
     if not keys:
         if 'keys' in switches:
             data = data.keys()
-        return json.dumps(data, indent=True)
+        return json.dumps(data, indent=True, separators=(",",":"))
 
     key = keys.pop(0)
     return printout(keys, data[key])
