@@ -29,12 +29,28 @@ cat test.json | pj --keys
 
 import sys
 import json
+import argparse
+
+parser = argparse.ArgumentParser(description='Parse JSON')
+
+parser.add_argument('--keys_only', action='store_true', default=False,
+                   help='return only the keys for the json object')
+
+parser.add_argument('--foreach', action='store', type=str,
+                   help='for each item in the json object, return value for this key. Similar to valueForKey in objC')
+
+parser.add_argument('paths', metavar='path', type=str, nargs='*',
+                   help='a item to extract from the json')
+
+args = parser.parse_args()
 
 
 def printout(keys, data):
     if not keys:
-        if 'keys' in switches:
+        if args.keys_only:
             data = data.keys()
+        elif args.foreach:
+            data = [x[args.foreach] for x in data if args.foreach in x]
         return json.dumps(data, indent=True, separators=(",",":"))
 
     key = keys.pop(0)
@@ -45,17 +61,11 @@ def attempt_int(n):
     except: return n
 
 x = json.load(sys.stdin)
-args = []
-switches = []
-for arg in sys.argv[1:]:
-    if arg.startswith('--'):
-        switches.append(arg[2:])
-    else:
-        args.append(arg)
 
-
-for arg in args:
-    keys = [attempt_int(n) for n in arg.split('.')]
+for path in args.paths:
+    keys = [attempt_int(n) for n in path.split('.')]
     print printout(keys, x)
-if not args:
+
+if not args.paths:
     print printout(None, x)
+
