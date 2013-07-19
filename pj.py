@@ -51,7 +51,7 @@ def printout(keys, data):
             data = data.keys()
         elif args.foreach:
             data = [x[args.foreach] for x in data if args.foreach in x]
-        return json.dumps(data, indent=True, separators=(",",":"))
+        return json.dumps(data, indent=True, sort_keys=True, separators=(",",":"))
 
     key = keys.pop(0)
     return printout(keys, data[key])
