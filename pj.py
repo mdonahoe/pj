@@ -33,6 +33,8 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Parse JSON')
 
+parser.add_argument('--compress', action='store_true', default=False,
+                   help='compress the json output as tightly as possible')
 parser.add_argument('--keys_only', action='store_true', default=False,
                    help='return only the keys for the json object')
 
@@ -51,7 +53,10 @@ def printout(keys, data):
             data = data.keys()
         elif args.foreach:
             data = [x[args.foreach] for x in data if args.foreach in x]
-        return json.dumps(data, indent=True, sort_keys=True, separators=(",",":"))
+        indent = True
+        if args.compress:
+            indent = None
+        return json.dumps(data, indent=indent, sort_keys=True, separators=(",",":"))
 
     key = keys.pop(0)
     return printout(keys, data[key])
